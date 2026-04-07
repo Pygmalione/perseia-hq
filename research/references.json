@@ -1,0 +1,37 @@
+[
+  {
+    "id": "charter",
+    "type": "internal_doc",
+    "title": "Perseia Imperial Gallery + Knowledge Garden Charter",
+    "path": "PROJECT_CHARTER.md",
+    "tags": ["strategy", "vision"]
+  },
+  {
+    "id": "task-status",
+    "type": "internal_doc",
+    "title": "Task Status Tracker",
+    "path": "TASK_STATUS.md",
+    "tags": ["operations", "progress"]
+  },
+  {
+    "id": "research-report",
+    "type": "research",
+    "title": "Logotopia Research Report",
+    "path": "research/research-report.md",
+    "tags": ["insights", "luxury-minimalism"]
+  },
+  {
+    "id": "architecture-patterns",
+    "type": "research",
+    "title": "Architecture Patterns for Logotopia Asset Brain",
+    "path": "research/architecture-patterns.md",
+    "tags": ["architecture", "asset-brain"]
+  },
+  {
+    "id": "product-insights",
+    "type": "research",
+    "title": "Product Insights – Perseia Imperial Gallery + Knowledge Garden",
+    "path": "research/product-insights.md",
+    "tags": ["product", "roadmap"]
+  }
+]
