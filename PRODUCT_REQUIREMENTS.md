@@ -1,48 +1,47 @@
-# Product requirements - Perseia Imperial Gallery + Knowledge Garden
+# Imperial Gallery of Perseia - PRD
 
-## Cel produktu
-Zbudować operacyjne headquarters Phantasii, które łączy piękną ekspozycję kreacji z pamięcią gustu Cesarza, asset brainem dla obrazów i wideo, systemem draftowania odpowiedzi oraz stateful warstwą planowania projektów, speców, epik i tasków.
+## Cel
+Zbudować premium frontend gallery site dla Imperial Gallery of Perseia, zgodny z najlepszymi standardami designu na kwiecień 2026, z procesem regularnej krytyki wielomodelowej.
 
-## Główne problemy do rozwiązania
-- Feedback o kreacjach ginie w czatach, zamiast odkładać się do trwałej pamięci wykonawczej.
-- Assety są rozproszone po plikach i trudno znaleźć właściwy wariant po motywie, kolorze, historii użycia lub relacji do biznesu.
-- Imperial Gallery jest dziś galerią ekspozycyjną, ale nie pełnym centrum operacyjnym.
-- Brakuje GUI do zarządzania wiedzą o osobach, politykach, tonie, historii zmian gustu i załącznikach.
-- Brakuje systemu, który pozwala przejść od briefu do draftu odpowiedzi i od draftu do assetu, zachowując pełną pamięć decyzji.
+## Założenia produktu
+- Projekt ma wyglądać jak marka premium, kulturowa i technologiczna jednocześnie,
+- Ton wizualny: luxury editorial + brutal precision + cinematic digital craft,
+- Zero AI slopu, zero generycznego SaaS looku,
+- Mobile first, wysoka dostępność, wysoka czytelność, mocna typografia,
+- Architektura gotowa pod rozbudowę o gallery entries, stories i curated exhibitions.
 
-## Użytkownicy
-- Phantasia jako główna operatorka systemu,
-- Karol jako finalny recenzent i źródło feedbacku,
-- Inni agenci Imperium jako konsumenci wiedzy i współwykonawcy.
+## Standardy kwiecień 2026
+- Mocna, charakterystyczna typografia, bez generycznych fontów,
+- Czytelna hierarchia i napięcie kompozycyjne,
+- Jedna dominująca idea wizualna na ekran, zamiast 12 słabych ozdobników,
+- Motion oszczędny, ale precyzyjny i kinowy,
+- Kontrast WCAG AA minimum,
+- Czysta semantyka HTML i odporność layoutu na mobile,
+- Content-driven blocks zamiast martwych placeholderów.
 
-## Jobs to be done
-1. Znaleźć w sekundach właściwy asset lub referencję wśród tysięcy plików.
-2. Zapisać feedback tak, aby wpływał na kolejne prompty, układ galerii i drafty odpowiedzi.
-3. Zarządzać projektami kreatywnymi przez PRD, epiki, taski i pliki stanu.
-4. Tworzyć drafty odpowiedzi idealnie dopasowane do osoby, relacji, tonu i historii.
-5. Budować kolejne serie logo, obrazów, wideo i dokumentów z pełną trasowalnością.
+## Kierunek estetyczny v1
+- Tło: ciepła kość słoniowa + grafit + stonowane złoto,
+- Typografia: display serif z wysokim kontrastem + wyrafinowany sans do treści,
+- Niezapomniany element: monumentalny hero z warstwowym framingiem i rytmem ekspozycyjnym,
+- Układ: editorial asymmetry, controlled luxury, museum-grade whitespace.
 
-## Zakres v1
-- Headquarters UI z modułami Gallery, Knowledge Garden, Asset Brain, Draft Studio, Projects,
-- SQLite jako główna baza operacyjna,
-- Graphiti jako pamięć temporalna i relacyjna,
-- Stateful files jako warstwa deterministyczna dla projektów i flow,
-- Ingestion pipeline dla istniejących i nowych assetów,
-- Registry feedbacku Karola i stylowych preferencji,
-- Wyszukiwanie po metadanych, tagach, relacjach i embeddingach,
-- Task and spec system dla projektów kreatywnych,
-- Logotopia production lane do 200+ assetów.
+## Zakres pierwszej iteracji
+1. Hero,
+2. Manifest / value proposition,
+3. Curated collections grid,
+4. Featured works / gallery rail,
+5. Design principles section,
+6. CTA / patronage section,
+7. Footer.
 
-## Zakres v2
-- Automatyczne ekstrakty z załączników i OCR,
-- Klasteryzacja wizualna assetów,
-- Scoring jakości kreacji,
-- Timeline zmian gustu,
-- Automatyczne propozycje draftów odpowiedzi i promptów.
+## Proces krytyki
+- Po każdej większej iteracji proszę o krytykę od Claude Opus 4.6,
+- Gemini 3.1 Pro jest drugim stałym krytykiem i ma być pytany częściej, szczególnie o hierarchię, UX, nowoczesność i napięcie wizualne,
+- Każda runda krytyki kończy się listą decyzji wdrożeniowych.
 
-## Kryteria sukcesu
-- Każdy nowy asset dostaje ID, metadata i ślad feedbacku,
-- Każdy feedback Karola może zostać odnaleziony i użyty przy nowej kreacji,
-- Headquarters ma spójne widoki dla wiedzy, assetów i projektów,
-- 200 nowych assetów można planować i śledzić batchowo,
-- System ma repo git, częste commity i gotowość do wdrożenia.
+## Kryteria akceptacji v1
+- Strona uruchamia się lokalnie bez błędów,
+- Jest responsywna dla mobile, tablet, desktop,
+- Ma własny charakter i nie wygląda jak template,
+- Otrzyma przynajmniej 2 rundy krytyki, Claude + Gemini,
+- Zmiany są zapisane w Git z częstymi commitami i pierwszym PR na GitHub.

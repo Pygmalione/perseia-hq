@@ -1,0 +1,106 @@
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { hqConfig } from '@/config/hq'
+
+export default function HqHome() {
+  return (
+    <main className="grain">
+      <section className="frame-line relative overflow-hidden px-5 pb-12 pt-5 sm:px-8 lg:px-12">
+        <div className="mx-auto flex max-w-7xl items-center justify-between border-b border-border/70 pb-4 text-xs uppercase tracking-[0.22em] text-muted-foreground">
+          <span>{hqConfig.eyebrow}</span>
+          <nav aria-label="Primary navigation" className="hidden items-center gap-6 md:flex">
+            {hqConfig.nav.links.map((link) => (
+              <Link key={link.href} href={link.href} className="hover:text-foreground">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mx-auto max-w-7xl py-10 lg:py-16">
+          <div className="space-y-8">
+            <div className="max-w-4xl space-y-6">
+              <h1 className="font-display text-balance text-6xl leading-none font-semibold tracking-[-0.04em] text-foreground sm:text-7xl lg:text-[7.5rem]">
+                {hqConfig.name}
+              </h1>
+
+              <p className="max-w-2xl text-balance text-lg leading-8 text-muted-foreground sm:text-xl">
+                {hqConfig.description}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link
+                href={hqConfig.nav.cta.href}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-panel)] transition hover:-translate-y-0.5 hover:bg-primary/92"
+              >
+                {hqConfig.nav.cta.label}
+                <ArrowUpRight className="size-4" />
+              </Link>
+
+              <p className="max-w-md text-sm leading-7 text-muted-foreground">
+                {hqConfig.tagline}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="modules" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="mt-0 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {hqConfig.modules.map((mod) => (
+              <Link key={mod.title} href={mod.href}>
+                <Card className="border border-border/80 bg-card/80 py-0 shadow-[var(--shadow-panel)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-gold)]">
+                  <CardHeader className="px-6 pt-6">
+                    <CardTitle className="font-display text-3xl tracking-[-0.035em] text-foreground">
+                      {mod.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm leading-7 text-muted-foreground">
+                      {mod.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="px-6 pb-6">
+                    <div className="rounded-2xl border border-border/70 bg-[linear-gradient(140deg,rgba(36,29,18,0.96),rgba(91,72,38,0.88),rgba(229,213,182,0.44))] p-5 text-primary-foreground">
+                      <div className="flex items-end justify-between gap-6">
+                        <div>
+                          <p className="font-display text-4xl tracking-[-0.04em]">{mod.stat}</p>
+                          <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-primary-foreground/60">
+                            {mod.statLabel}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="principles" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <h2 className="font-display text-5xl leading-none tracking-[-0.04em] text-foreground sm:text-6xl">
+            Zasady HQ
+          </h2>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {hqConfig.principles.map((principle) => (
+              <div key={principle} className="rounded-[1.75rem] border border-border/80 bg-background/70 p-6 shadow-[var(--shadow-panel)]">
+                <p className="text-sm leading-7 text-foreground">{principle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
