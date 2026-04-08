@@ -1,23 +1,9 @@
 import { hqConfig } from '@/config/hq'
+import { getBrainSummary } from '@/lib/brain-data'
 
-const recentAssets = [
-  { id: 'a1', title: 'Signal Aperture', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-  { id: 'a2', title: 'Neural Topology', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-  { id: 'a3', title: 'Crystal Fold', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-  { id: 'a4', title: 'Luxury V Monogram', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-  { id: 'a5', title: 'Fluid Ribbon', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-  { id: 'a6', title: 'Sacred Grid', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-]
-
-const stats = [
-  { label: 'Assetów total', value: '308' },
-  { label: 'Obrazy', value: '295' },
-  { label: 'Wideo', value: '8' },
-  { label: 'PDF / doc', value: '5' },
-]
-
-export default function BrainPage() {
+export default async function BrainPage() {
   const brainModule = hqConfig.modules.find((m) => m.title === 'Asset brain')
+  const summary = await getBrainSummary()
 
   return (
     <main className="grain">
@@ -60,7 +46,7 @@ export default function BrainPage() {
       <section id="brain-stats" className="px-5 pb-10 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((s) => (
+            {summary.stats.map((s) => (
               <div
                 key={s.label}
                 className="rounded-[1.75rem] border border-border/80 bg-card/80 p-6 shadow-[var(--shadow-panel)]"
@@ -79,7 +65,7 @@ export default function BrainPage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between border-b border-border/70 pb-4 text-xs uppercase tracking-[0.22em] text-muted-foreground">
             <span>Ostatnio dodane</span>
-            <span>{recentAssets.length} assetów</span>
+            <span>{summary.recentAssets.length} assetów</span>
           </div>
 
           <div className="mt-6">
@@ -93,8 +79,8 @@ export default function BrainPage() {
                 </tr>
               </thead>
               <tbody>
-                {recentAssets.map((asset) => (
-                  <tr key={asset.id} className="border-b border-border/30">
+                {summary.recentAssets.map((asset) => (
+                  <tr key={`${asset.title}-${asset.date}`} className="border-b border-border/30">
                     <td className="py-3 text-foreground">{asset.title}</td>
                     <td className="py-3 text-muted-foreground">{asset.kind}</td>
                     <td className="py-3 text-muted-foreground">{asset.project}</td>
