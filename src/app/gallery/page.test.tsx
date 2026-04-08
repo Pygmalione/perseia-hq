@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import GalleryPage from './page'
 
 describe('Gallery page', () => {
@@ -55,6 +55,15 @@ describe('Gallery page', () => {
       const familyLabels = screen.getAllByText('Logotopia')
       expect(familyLabels.length).toBe(16)
     })
+  })
+
+  it('opens a lightbox when a gallery card is clicked', () => {
+    render(<GalleryPage />)
+
+    fireEvent.click(screen.getByRole('button', { name: /neural topology/i }))
+
+    expect(screen.getByRole('heading', { name: /neural topology/i, level: 2 })).toBeInTheDocument()
+    expect(screen.getByText(/feedback 1-10/i)).toBeInTheDocument()
   })
 
   it('renders main element', () => {

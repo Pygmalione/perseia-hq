@@ -1,3 +1,4 @@
+import { GalleryBrowser } from '@/components/gallery-browser'
 import { hqConfig } from '@/config/hq'
 
 const galleryItems = [
@@ -162,32 +163,7 @@ export default function GalleryPage() {
             <span>{galleryItems.length} assetów</span>
           </div>
 
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {galleryItems.map((item) => (
-              <article
-                key={item.id}
-                className="group overflow-hidden rounded-[1.75rem] border border-border/80 bg-card/80 shadow-[var(--shadow-panel)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-gold)]"
-              >
-                <div className="relative aspect-square overflow-hidden bg-background">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.src}
-                    alt={item.alt}
-                    className="h-full w-full object-contain p-4 transition group-hover:scale-[1.03]"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="px-5 pb-5 pt-4">
-                  <h3 className="font-display text-lg tracking-[-0.02em] text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                    {item.family}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+          <GalleryBrowser items={galleryItems} />
         </div>
       </section>
     </main>
