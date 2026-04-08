@@ -1,16 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import * as childProcess from 'node:child_process'
-import * as path from 'node:path'
-
 import { NextResponse } from 'next/server'
 
-function projectRoot() {
-  return path.resolve(process.cwd())
-}
-
-function dbPath() {
-  return path.join(projectRoot(), 'state', 'hq.sqlite')
-}
+import { getDb } from '@/lib/db'
 
 export async function POST(request: Request) {
   try {
@@ -27,17 +18,16 @@ export async function POST(request: Request) {
     }
 
     const summary = note ? `Ocena ${rating}/10 - ${note}` : `Ocena ${rating}/10`
-    childProcess.execFileSync(
-      'sqlite3',
-      [
-        dbPath(),
-        `INSERT INTO feedback (id, asset_id, author, source_channel, sentiment, summary, raw_text) VALUES ('${feedbackId.replace(/'/g, "''")}', '${assetId.replace(/'/g, "''")}', '${author.replace(/'/g, "''")}', '${sourceChannel.replace(/'/g, "''")}', 'scored', '${summary.replace(/'/g, "''")}', '${note.replace(/'/g, "''")}');`,
-      ],
-      { cwd: projectRoot(), encoding: 'utf8' }
-    )
+
+    const db = getDb()
+    await db.execute({
+      sql: `INSERT INTO feedback (id, asset_id, author, source_channel, sentiment, summary, raw_text) VALUES (?, ?, ?, ?, 'scored', ?, ?)`,
+      args: [feedbackId, assetId, author, sourceChannel, summary, note],
+    })
 
     return NextResponse.json({ ok: true, feedbackId, rating })
-  } catch {
+  } catch (error) {
+    console.error('Feedback write failed:', error)
     return NextResponse.json({ ok: false, error: 'feedback_write_failed' }, { status: 500 })
   }
 }

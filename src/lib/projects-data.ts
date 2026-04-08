@@ -1,5 +1,4 @@
-import * as childProcess from 'node:child_process'
-import * as path from 'node:path'
+import { getDb } from './db'
 
 export type ProjectCard = {
   id: string
@@ -48,45 +47,32 @@ export const fallbackProjectsSummary: ProjectsSummary = {
   ],
 }
 
-function projectRoot() {
-  return path.resolve(process.cwd())
-}
-
-function dbPath() {
-  return path.join(projectRoot(), 'state', 'hq.sqlite')
-}
-
-function queryJson<T>(sql: string): T[] {
-  const raw = childProcess.execFileSync('sqlite3', ['-json', dbPath(), sql], {
-    cwd: projectRoot(),
-    encoding: 'utf8',
-  })
-
-  return JSON.parse(raw || '[]') as T[]
-}
-
 export async function getProjectsSummary(): Promise<ProjectsSummary> {
   try {
-    const totalRows = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM projects;")
-    const projectRows = queryJson<{ id: string; name: string; status: string; updated_at: string | null }>(`
-      SELECT id, name, status, updated_at
-      FROM projects
-      ORDER BY updated_at DESC, id DESC
-      LIMIT 4;
-    `)
+    const db = getDb()
 
-    if (projectRows.length === 0) {
+    const [totalResult, projectRows] = await Promise.all([
+      db.execute("SELECT COUNT(*) AS value FROM projects;"),
+      db.execute(`
+        SELECT id, name, status, updated_at
+        FROM projects
+        ORDER BY updated_at DESC, id DESC
+        LIMIT 4;
+      `),
+    ])
+
+    if (projectRows.rows.length === 0) {
       return fallbackProjectsSummary
     }
 
     return {
-      totalProjects: totalRows[0]?.value ?? projectRows.length,
-      projects: projectRows.map((project) => ({
-        id: project.id,
-        title: project.name,
-        status: project.status,
+      totalProjects: Number(totalResult.rows[0]?.value ?? projectRows.rows.length),
+      projects: projectRows.rows.map((row) => ({
+        id: String(row.id),
+        title: String(row.name),
+        status: String(row.status),
         tasks: { done: 0, total: 1 },
-        updated: (project.updated_at ?? '1970-01-01').slice(0, 10),
+        updated: String(row.updated_at ?? '1970-01-01').slice(0, 10),
       })),
     }
   } catch {

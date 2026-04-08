@@ -1,5 +1,4 @@
-import * as childProcess from 'node:child_process'
-import * as path from 'node:path'
+import { getDb } from './db'
 
 export type BrainAssetRow = {
   title: string
@@ -35,36 +34,18 @@ const fallbackSummary: BrainSummary = {
   ],
 }
 
-function projectRoot() {
-  return path.resolve(process.cwd())
-}
-
-function dbPath() {
-  return path.join(projectRoot(), 'state', 'hq.sqlite')
-}
-
-function queryJson<T>(sql: string): T[] {
-  const raw = childProcess.execFileSync('sqlite3', ['-json', dbPath(), sql], {
-    cwd: projectRoot(),
-    encoding: 'utf8',
-  })
-
-  return JSON.parse(raw || '[]') as T[]
-}
-
 export async function getBrainSummary(): Promise<BrainSummary> {
   try {
-    const totalRows = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM assets;")
-    const imageRows = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM assets WHERE kind = 'image';")
-    const videoRows = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM assets WHERE kind = 'video';")
-    const docRows = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM assets WHERE kind IN ('pdf', 'doc');")
+    const db = getDb()
 
-    const recentAssets = queryJson<{
-      title: string | null
-      kind: string | null
-      project: string | null
-      date: string | null
-    }>(`
+    const [totalResult, imageResult, videoResult, docResult] = await Promise.all([
+      db.execute("SELECT COUNT(*) AS value FROM assets;"),
+      db.execute("SELECT COUNT(*) AS value FROM assets WHERE kind = 'image';"),
+      db.execute("SELECT COUNT(*) AS value FROM assets WHERE kind = 'video';"),
+      db.execute("SELECT COUNT(*) AS value FROM assets WHERE kind IN ('pdf', 'doc');"),
+    ])
+
+    const recentResult = await db.execute(`
       SELECT
         COALESCE(title, 'Untitled asset') AS title,
         COALESCE(kind, 'unknown') AS kind,
@@ -73,19 +54,21 @@ export async function getBrainSummary(): Promise<BrainSummary> {
       FROM assets
       ORDER BY created_at DESC, id DESC
       LIMIT 6;
-    `).map((row) => ({
-      title: row.title ?? 'Untitled asset',
-      kind: row.kind ?? 'unknown',
-      project: row.project ?? 'Bez projektu',
-      date: row.date ?? '1970-01-01',
+    `)
+
+    const recentAssets: BrainAssetRow[] = recentResult.rows.map((row) => ({
+      title: String(row.title ?? 'Untitled asset'),
+      kind: String(row.kind ?? 'unknown'),
+      project: String(row.project ?? 'Bez projektu'),
+      date: String(row.date ?? '1970-01-01'),
     }))
 
     return {
       stats: [
-        { label: 'Assetów total', value: String(totalRows[0]?.value ?? 0) },
-        { label: 'Obrazy', value: String(imageRows[0]?.value ?? 0) },
-        { label: 'Wideo', value: String(videoRows[0]?.value ?? 0) },
-        { label: 'PDF / doc', value: String(docRows[0]?.value ?? 0) },
+        { label: 'Assetów total', value: String(totalResult.rows[0]?.value ?? 0) },
+        { label: 'Obrazy', value: String(imageResult.rows[0]?.value ?? 0) },
+        { label: 'Wideo', value: String(videoResult.rows[0]?.value ?? 0) },
+        { label: 'PDF / doc', value: String(docResult.rows[0]?.value ?? 0) },
       ],
       recentAssets,
     }

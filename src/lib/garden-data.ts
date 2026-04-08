@@ -1,5 +1,4 @@
-import * as childProcess from 'node:child_process'
-import * as path from 'node:path'
+import { getDb } from './db'
 
 export type GardenEntry = {
   id: string
@@ -67,58 +66,39 @@ export const fallbackGardenSummary: GardenSummary = {
   entries: fallbackEntries,
 }
 
-function projectRoot() {
-  return path.resolve(process.cwd())
-}
-
-function dbPath() {
-  return path.join(projectRoot(), 'state', 'hq.sqlite')
-}
-
-function queryJson<T>(sql: string): T[] {
-  const raw = childProcess.execFileSync('sqlite3', ['-json', dbPath(), sql], {
-    cwd: projectRoot(),
-    encoding: 'utf8',
-  })
-
-  return JSON.parse(raw || '[]') as T[]
-}
-
 export async function getGardenSummary(): Promise<GardenSummary> {
   try {
-    const totalPreferences = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM preference_rules;")
-    const totalFeedback = queryJson<{ value: number }>("SELECT COUNT(*) AS value FROM feedback;")
-    const dbEntries = queryJson<{
-      id: string
-      scope: string
-      name: string
-      rule_text: string
-      strength: number | null
-      status: string | null
-    }>(`
+    const db = getDb()
+
+    const [totalPrefResult, totalFeedbackResult] = await Promise.all([
+      db.execute("SELECT COUNT(*) AS value FROM preference_rules;"),
+      db.execute("SELECT COUNT(*) AS value FROM feedback;"),
+    ])
+
+    const entriesResult = await db.execute(`
       SELECT id, scope, name, rule_text, strength, status
       FROM preference_rules
       ORDER BY strength DESC, id DESC
       LIMIT 5;
     `)
 
-    if (dbEntries.length === 0) {
+    if (entriesResult.rows.length === 0) {
       return fallbackGardenSummary
     }
 
-    const entries: GardenEntry[] = dbEntries.map((entry) => ({
-      id: entry.id,
-      kind: entry.scope === 'person' ? 'person' : entry.scope === 'global' ? 'rule' : 'preference',
-      title: entry.name,
-      scope: entry.scope,
-      description: entry.rule_text,
-      source: entry.status ? `SQLite - ${entry.status}` : 'SQLite',
+    const entries: GardenEntry[] = entriesResult.rows.map((row) => ({
+      id: String(row.id),
+      kind: String(row.scope) === 'person' ? 'person' : String(row.scope) === 'global' ? 'rule' : 'preference',
+      title: String(row.name),
+      scope: String(row.scope),
+      description: String(row.rule_text),
+      source: row.status ? `SQLite - ${row.status}` : 'SQLite',
     }))
 
     return {
       totalEntries: entries.length,
-      totalPreferences: totalPreferences[0]?.value ?? 0,
-      totalFeedback: totalFeedback[0]?.value ?? 0,
+      totalPreferences: Number(totalPrefResult.rows[0]?.value ?? 0),
+      totalFeedback: Number(totalFeedbackResult.rows[0]?.value ?? 0),
       entries,
     }
   } catch {
