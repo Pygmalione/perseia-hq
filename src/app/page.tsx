@@ -124,6 +124,50 @@ export default function HqHome() {
         </div>
       </section>
 
+      <section id="draft-studio" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl rounded-[2rem] border border-border/80 bg-card/75 p-7 shadow-[var(--shadow-panel)] sm:p-10">
+          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Studio odpowiedzi</p>
+              <h2 className="font-display text-5xl leading-none tracking-[-0.04em] text-foreground sm:text-6xl">
+                Draft Studio
+              </h2>
+              <p className="max-w-xl text-base leading-8 text-muted-foreground">
+                Szkice odpowiedzi, które pamiętają relację, ton i historię. Zero zimnych automatów. Same celne słowa.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {['Karol', 'Visuana', 'Premium tone', 'Feedback-aware'].map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full border border-border/80 bg-background/70 px-4 py-2 text-sm text-foreground shadow-[var(--shadow-panel)]"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-[1.5rem] border border-border/80 bg-background/80 p-4 shadow-[var(--shadow-panel)]">
+                <textarea
+                  aria-label="Draft studio input"
+                  placeholder="Napisz szkic odpowiedzi albo brief"
+                  className="min-h-40 w-full resize-none rounded-xl border border-border/80 bg-background px-4 py-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/35"
+                />
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button className="rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-panel)]">
+                  Generuj draft
+                </button>
+                <button className="rounded-full border border-border/80 bg-background/70 px-5 py-3 text-sm font-semibold text-foreground shadow-[var(--shadow-panel)]">
+                  Zapisz jako notatkę
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="principles" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <h2 className="font-display text-5xl leading-none tracking-[-0.04em] text-foreground sm:text-6xl">

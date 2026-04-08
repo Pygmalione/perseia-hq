@@ -86,6 +86,27 @@ describe('Perseia HQ homepage', () => {
     })
   })
 
+  describe('draft studio section', () => {
+    it('renders the draft studio heading', () => {
+      render(<HqHome />)
+      expect(screen.getByRole('heading', { name: /draft studio/i })).toBeInTheDocument()
+    })
+
+    it('renders the draft textarea placeholder', () => {
+      render(<HqHome />)
+      expect(screen.getByPlaceholderText(/napisz szkic odpowiedzi albo brief/i)).toBeInTheDocument()
+    })
+
+    it('renders draft context chips', () => {
+      const { container } = render(<HqHome />)
+      const studioSection = container.querySelector('#draft-studio')!
+      for (const item of ['Karol', 'Visuana', 'Premium tone', 'Feedback-aware']) {
+        const found = Array.from(studioSection.querySelectorAll('*')).some((el) => el.textContent === item)
+        expect(found).toBe(true)
+      }
+    })
+  })
+
   describe('principles section', () => {
     it('renders all principles', () => {
       render(<HqHome />)
