@@ -1,0 +1,22 @@
+{
+  "globalPreferences": [
+    {
+      "id": "pref-001",
+      "summary": "Czytelne ale eleganckie V",
+      "source": "Karol feedback",
+      "strength": 0.95
+    },
+    {
+      "id": "pref-002",
+      "summary": "Luxury minimalism 2026, mniej agresywnej komplikacji",
+      "source": "Karol feedback",
+      "strength": 0.98
+    },
+    {
+      "id": "pref-003",
+      "summary": "High-end advisory, premium tech, bez esportowego chaosu",
+      "source": "Karol feedback",
+      "strength": 0.96
+    }
+  ]
+}

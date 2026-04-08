@@ -1,0 +1,29 @@
+{
+  "project": "042026-perseia-imperial-gallery-knowledge-garden",
+  "updatedAt": "2026-04-08T00:00:00Z",
+  "checkpoints": [
+    {
+      "id": "cp-001",
+      "title": "Repo and strategy foundation",
+      "status": "done",
+      "evidence": ["ca40e04", "b61cd3b"]
+    },
+    {
+      "id": "cp-002",
+      "title": "Product architecture and execution model",
+      "status": "done",
+      "evidence": ["e43f77d"]
+    },
+    {
+      "id": "cp-003",
+      "title": "GUI headquarters specification",
+      "status": "done",
+      "evidence": ["GUI_SPEC.md"]
+    },
+    {
+      "id": "cp-004",
+      "title": "Media brain and implementation scaffolding",
+      "status": "next"
+    }
+  ]
+}
