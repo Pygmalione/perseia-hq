@@ -41,13 +41,32 @@
     {
       "id": "cp-007",
       "title": "Image generation pass",
-      "status": "blocked",
-      "blocker": "No image-generation provider registered for cliproxyapi"
+      "status": "in_progress",
+      "evidence": [
+        "assets/logotopia/generated/2026-04-08/luxury-v-monogram-01.jpg",
+        "assets/logotopia/generated/2026-04-08/crystal-fold-01.jpg",
+        "assets/logotopia/generated/2026-04-08/signal-aperture-01.jpg",
+        "assets/logotopia/generated/2026-04-08/fluid-ribbon-01.jpg"
+      ],
+      "bestCandidate": "signal-aperture-01"
     },
     {
       "id": "cp-008",
       "title": "SQLite schema and Graphiti sync",
-      "status": "next"
+      "status": "done",
+      "evidence": ["a18c877", "state/hq.sqlite", "state/graphiti-sync-preview.json"]
+    },
+    {
+      "id": "cp-009",
+      "title": "Feedback registry and ingest pipeline",
+      "status": "done",
+      "evidence": ["7838e96", "0a25b82"]
+    },
+    {
+      "id": "cp-010",
+      "title": "Search and Draft UI foundations",
+      "status": "done",
+      "evidence": ["70924d7", "7ed2916"]
     }
   ]
 }
