@@ -1,35 +1,5 @@
 import { hqConfig } from '@/config/hq'
-
-const epics = [
-  {
-    id: 'E1',
-    title: 'Logotopia - pipeline generacji logo Visuana',
-    status: 'in-progress',
-    tasks: { done: 8, total: 12 },
-    updated: '2026-04-08',
-  },
-  {
-    id: 'E2',
-    title: 'Perseia HQ - headquarters piękna',
-    status: 'in-progress',
-    tasks: { done: 18, total: 25 },
-    updated: '2026-04-09',
-  },
-  {
-    id: 'E3',
-    title: 'Galeria fotografii AI Cesarza',
-    status: 'planned',
-    tasks: { done: 0, total: 8 },
-    updated: '2026-04-05',
-  },
-  {
-    id: 'E4',
-    title: 'Design system Imperium',
-    status: 'planned',
-    tasks: { done: 2, total: 15 },
-    updated: '2026-04-01',
-  },
-]
+import { getProjectsSummary } from '@/lib/projects-data'
 
 const statusLabels: Record<string, string> = {
   'in-progress': 'W toku',
@@ -43,8 +13,9 @@ const statusColors: Record<string, string> = {
   done: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25',
 }
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
   const projModule = hqConfig.modules.find((m) => m.title === 'Projekty')
+  const summary = await getProjectsSummary()
 
   return (
     <main className="grain">
@@ -66,11 +37,11 @@ export default function ProjectsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-between border-b border-border/70 pb-4 text-xs uppercase tracking-[0.22em] text-muted-foreground">
             <span>Epiki</span>
-            <span>{epics.length} projektów</span>
+            <span>{summary.totalProjects} projektów</span>
           </div>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {epics.map((epic) => {
+            {summary.projects.map((epic) => {
               const progress = epic.tasks.total > 0 ? Math.round((epic.tasks.done / epic.tasks.total) * 100) : 0
               return (
                 <article

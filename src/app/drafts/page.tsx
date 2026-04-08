@@ -1,13 +1,9 @@
 import { hqConfig } from '@/config/hq'
+import { getDraftsSummary } from '@/lib/drafts-data'
 
-const draftPresets = [
-  { id: 'p1', label: 'Karol - ciepły, konkretny', person: 'Karol Dębkowski' },
-  { id: 'p2', label: 'Jadzia - jasny kontekst', person: 'Jadzia Kim' },
-  { id: 'p3', label: 'Klient - premium, profesjonalny', person: 'Klient zewnętrzny' },
-]
-
-export default function DraftsPage() {
+export default async function DraftsPage() {
   const draftsModule = hqConfig.modules.find((m) => m.title === 'Draft studio')
+  const summary = await getDraftsSummary()
 
   return (
     <main className="grain">
@@ -37,7 +33,7 @@ export default function DraftsPage() {
                   Preset osoby
                 </label>
                 <div className="flex flex-wrap gap-3">
-                  {draftPresets.map((preset) => (
+                  {summary.presets.map((preset) => (
                     <span
                       key={preset.id}
                       className="rounded-full border border-border/80 bg-background/70 px-4 py-2 text-sm text-foreground shadow-[var(--shadow-panel)]"
