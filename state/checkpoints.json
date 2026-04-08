@@ -1,6 +1,6 @@
 {
   "project": "042026-perseia-imperial-gallery-knowledge-garden",
-  "updatedAt": "2026-04-08T00:00:00Z",
+  "updatedAt": "2026-04-08T09:22:00Z",
   "checkpoints": [
     {
       "id": "cp-001",
@@ -18,11 +18,35 @@
       "id": "cp-003",
       "title": "GUI headquarters specification",
       "status": "done",
-      "evidence": ["GUI_SPEC.md"]
+      "evidence": ["b1bd83d", "GUI_SPEC.md"]
     },
     {
       "id": "cp-004",
-      "title": "Media brain and implementation scaffolding",
+      "title": "Media brain spec and import state",
+      "status": "done",
+      "evidence": ["ec0c367", "MEDIA_BRAIN_SPEC.md"]
+    },
+    {
+      "id": "cp-005",
+      "title": "HQ app bootstrap - 5 modules, 25/25 tests, Vercel deploy",
+      "status": "done",
+      "evidence": ["d614860", "6bd0914", "https://042026-perseia-imperial-gallery-kno.vercel.app"]
+    },
+    {
+      "id": "cp-006",
+      "title": "Logotopia batch pipeline - 10 families x 10 prompts",
+      "status": "done",
+      "evidence": ["scripts/logotopia-batch.sh", "assets/logotopia/"]
+    },
+    {
+      "id": "cp-007",
+      "title": "Image generation pass",
+      "status": "blocked",
+      "blocker": "No image-generation provider registered for cliproxyapi"
+    },
+    {
+      "id": "cp-008",
+      "title": "SQLite schema and Graphiti sync",
       "status": "next"
     }
   ]
