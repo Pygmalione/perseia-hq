@@ -65,6 +65,27 @@ describe('Perseia HQ homepage', () => {
     })
   })
 
+  describe('asset brain search section', () => {
+    it('renders the search heading', () => {
+      render(<HqHome />)
+      expect(screen.getByRole('heading', { name: /asset brain search/i })).toBeInTheDocument()
+    })
+
+    it('renders the search input with placeholder', () => {
+      render(<HqHome />)
+      expect(screen.getByPlaceholderText(/szukaj po nazwie, tagu, projekcie lub typie/i)).toBeInTheDocument()
+    })
+
+    it('renders quick search facets', () => {
+      const { container } = render(<HqHome />)
+      const searchSection = container.querySelector('#search')!
+      for (const facet of ['Obrazy', 'Wideo', 'PDF', 'Feedback']) {
+        const found = Array.from(searchSection.querySelectorAll('*')).some((el) => el.textContent === facet)
+        expect(found).toBe(true)
+      }
+    })
+  })
+
   describe('principles section', () => {
     it('renders all principles', () => {
       render(<HqHome />)

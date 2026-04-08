@@ -87,6 +87,43 @@ export default function HqHome() {
         </div>
       </section>
 
+      <section id="search" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl rounded-[2rem] border border-border/80 bg-card/75 p-7 shadow-[var(--shadow-panel)] sm:p-10">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="space-y-4">
+              <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Asset Brain</p>
+              <h2 className="font-display text-5xl leading-none tracking-[-0.04em] text-foreground sm:text-6xl">
+                Asset Brain Search
+              </h2>
+              <p className="max-w-xl text-base leading-8 text-muted-foreground">
+                Znajdź właściwy asset po nazwie, tagu, projekcie, typie, historii użycia albo feedbacku. Zero kopania po jaskiniach folderów.
+              </p>
+            </div>
+
+            <div className="space-y-5">
+              <div className="rounded-[1.5rem] border border-border/80 bg-background/80 p-4 shadow-[var(--shadow-panel)]">
+                <input
+                  aria-label="Search assets"
+                  placeholder="Szukaj po nazwie, tagu, projekcie lub typie"
+                  className="min-h-12 w-full rounded-xl border border-border/80 bg-background px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/35"
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                {['Obrazy', 'Wideo', 'PDF', 'Feedback'].map((facet) => (
+                  <span
+                    key={facet}
+                    className="rounded-full border border-border/80 bg-background/70 px-4 py-2 text-sm text-foreground shadow-[var(--shadow-panel)]"
+                  >
+                    {facet}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="principles" className="px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <h2 className="font-display text-5xl leading-none tracking-[-0.04em] text-foreground sm:text-6xl">
