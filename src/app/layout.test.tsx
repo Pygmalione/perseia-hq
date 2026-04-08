@@ -8,6 +8,10 @@ vi.mock('next/font/google', () => ({
   Geist_Mono: () => ({ variable: '--font-geist-mono' }),
 }))
 
+vi.mock('@/components/global-nav', () => ({
+  GlobalNav: () => <div data-testid="global-nav">Global nav</div>,
+}))
+
 import RootLayout, { metadata } from './layout'
 
 describe('RootLayout metadata', () => {
@@ -29,6 +33,7 @@ describe('RootLayout component', () => {
         <div data-testid="child-content">test child</div>
       </RootLayout>
     )
+    expect(screen.getByTestId('global-nav')).toBeInTheDocument()
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
     expect(screen.getByText('test child')).toBeInTheDocument()
   })

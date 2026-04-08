@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { GlobalNav } from "@/components/global-nav";
 
 const display = Cormorant_Garamond({
   variable: "--font-display",
@@ -39,7 +40,10 @@ export default function RootLayout({
       lang="pl"
       className={`${display.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <GlobalNav />
+        {children}
+      </body>
     </html>
   );
 }

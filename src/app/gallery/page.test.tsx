@@ -14,7 +14,7 @@ describe('Gallery page', () => {
 
   it('renders gallery items count', () => {
     render(<GalleryPage />)
-    expect(screen.getByText(/8 assetów/i)).toBeInTheDocument()
+    expect(screen.getByText(/16 assetów/i)).toBeInTheDocument()
   })
 
   it('renders the logotopia section label', () => {
@@ -26,14 +26,14 @@ describe('Gallery page', () => {
     it('renders all gallery item titles', () => {
       render(<GalleryPage />)
       const titles = [
-        'Signal Aperture',
         'Neural Topology',
+        'Hexagonal Prism',
+        'Arch Monogram',
+        'Signal Aperture',
+        'Constellation Weave',
         'Luxury V Monogram',
         'Crystal Fold',
         'Fluid Ribbon',
-        'Sacred Grid',
-        'Shadow Depth',
-        'Prism Split',
       ]
       for (const title of titles) {
         expect(screen.getByText(title)).toBeInTheDocument()
@@ -43,7 +43,7 @@ describe('Gallery page', () => {
     it('renders all gallery images with alt text', () => {
       render(<GalleryPage />)
       const images = screen.getAllByRole('img')
-      expect(images.length).toBe(8)
+      expect(images.length).toBe(16)
       for (const img of images) {
         expect(img).toHaveAttribute('alt')
         expect(img.getAttribute('alt')).not.toBe('')
@@ -53,7 +53,7 @@ describe('Gallery page', () => {
     it('renders family labels for each item', () => {
       render(<GalleryPage />)
       const familyLabels = screen.getAllByText('Logotopia')
-      expect(familyLabels.length).toBe(8)
+      expect(familyLabels.length).toBe(16)
     })
   })
 
