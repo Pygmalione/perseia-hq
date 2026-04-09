@@ -36,14 +36,14 @@ export function HqSearchForm({ suggestions = [] }: HqSearchFormProps) {
 
   return (
     <>
-      <form onSubmit={submit} className="rounded-[1.5rem] border border-border/80 bg-background/80 p-4 shadow-[var(--shadow-panel)]">
+      <form onSubmit={submit} className="rounded-[1.5rem] border border-border/80 bg-background/80 p-4 shadow-[var(--shadow-panel)] sm:p-5">
         <input
           aria-label="Search assets"
           list="hq-search-suggestions"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Szukaj po nazwie, tagu, projekcie lub typie"
-          className="min-h-12 w-full rounded-xl border border-border/80 bg-background px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/35"
+          className="min-h-12 w-full rounded-xl border border-border/80 bg-background px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/35 sm:text-sm"
         />
         <datalist id="hq-search-suggestions">
           {uniqueSuggestions.map((suggestion) => (
@@ -52,7 +52,7 @@ export function HqSearchForm({ suggestions = [] }: HqSearchFormProps) {
         </datalist>
       </form>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
         {[
           ['all', 'Wszystko'],
           ['image', 'Obrazy'],
@@ -65,7 +65,7 @@ export function HqSearchForm({ suggestions = [] }: HqSearchFormProps) {
             type="button"
             onClick={() => setFacet(value)}
             aria-pressed={facet === value}
-            className={`rounded-full border px-4 py-2 text-sm shadow-[var(--shadow-panel)] transition ${
+            className={`min-h-11 rounded-full border px-4 py-2 text-sm shadow-[var(--shadow-panel)] transition touch-manipulation justify-center ${
               facet === value
                 ? 'border-primary bg-primary text-primary-foreground'
                 : 'border-border/80 bg-background/70 text-foreground'
@@ -77,13 +77,13 @@ export function HqSearchForm({ suggestions = [] }: HqSearchFormProps) {
       </div>
 
       {uniqueSuggestions.length > 0 ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 sm:gap-2.5">
           {uniqueSuggestions.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
               onClick={() => pickSuggestion(suggestion)}
-              className="rounded-full border border-border/70 bg-background/65 px-3 py-1.5 text-xs tracking-[0.01em] text-muted-foreground transition hover:border-foreground/20 hover:text-foreground"
+              className="min-h-11 rounded-full border border-border/70 bg-background/65 px-4 py-2 text-sm tracking-[0.01em] text-muted-foreground transition touch-manipulation hover:border-foreground/20 hover:text-foreground sm:min-h-9 sm:px-3 sm:py-1.5 sm:text-xs"
             >
               {suggestion}
             </button>
