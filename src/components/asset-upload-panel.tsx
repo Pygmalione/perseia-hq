@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from 'react'
 
+import { detectUploadKind, type UploadKind } from '@/lib/upload-kind'
+
 type PendingFile = {
   name: string
   size: number
   mimeType: string
-  kind: 'image' | 'video' | 'pdf'
+  kind: UploadKind
 }
 
 type IntakeResponse = {
@@ -30,12 +32,6 @@ type CommitResponse = {
   }
 }
 
-function detectKind(file: File): PendingFile['kind'] {
-  if (file.type.startsWith('image/')) return 'image'
-  if (file.type.startsWith('video/')) return 'video'
-  return 'pdf'
-}
-
 function formatSize(bytes: number) {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
@@ -54,7 +50,7 @@ export function AssetUploadPanel() {
         name: file.name,
         size: file.size,
         mimeType: file.type || 'application/octet-stream',
-        kind: detectKind(file),
+        kind: detectUploadKind(file),
       })),
     [files]
   )
@@ -64,7 +60,7 @@ export function AssetUploadPanel() {
       name: file.name,
       size: file.size,
       mimeType: file.type || 'application/octet-stream',
-      kind: detectKind(file),
+      kind: detectUploadKind(file),
     }))
 
     setStatus('sending')
