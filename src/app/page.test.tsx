@@ -1,6 +1,11 @@
 import { render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 import HqHome from './page'
 import { hqConfig } from '@/config/hq'
+
+vi.mock('@/components/hq-search-form', () => ({
+  HqSearchForm: () => <div data-testid="hq-search-form">HQ search form</div>,
+}))
 
 describe('Perseia HQ homepage', () => {
   it('renders the headquarters headline', () => {
@@ -71,18 +76,9 @@ describe('Perseia HQ homepage', () => {
       expect(screen.getByRole('heading', { name: /asset brain search/i })).toBeInTheDocument()
     })
 
-    it('renders the search input with placeholder', () => {
+    it('renders the HQ search form', () => {
       render(<HqHome />)
-      expect(screen.getByPlaceholderText(/szukaj po nazwie, tagu, projekcie lub typie/i)).toBeInTheDocument()
-    })
-
-    it('renders quick search facets', () => {
-      const { container } = render(<HqHome />)
-      const searchSection = container.querySelector('#search')!
-      for (const facet of ['Obrazy', 'Wideo', 'PDF', 'Feedback']) {
-        const found = Array.from(searchSection.querySelectorAll('*')).some((el) => el.textContent === facet)
-        expect(found).toBe(true)
-      }
+      expect(screen.getByTestId('hq-search-form')).toBeInTheDocument()
     })
   })
 

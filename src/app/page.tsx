@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
+import { HqSearchForm } from '@/components/hq-search-form'
 import {
   Card,
   CardContent,
@@ -101,24 +102,7 @@ export default function HqHome() {
             </div>
 
             <div className="space-y-5">
-              <div className="rounded-[1.5rem] border border-border/80 bg-background/80 p-4 shadow-[var(--shadow-panel)]">
-                <input
-                  aria-label="Search assets"
-                  placeholder="Szukaj po nazwie, tagu, projekcie lub typie"
-                  className="min-h-12 w-full rounded-xl border border-border/80 bg-background px-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary/35"
-                />
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                {['Obrazy', 'Wideo', 'PDF', 'Feedback'].map((facet) => (
-                  <span
-                    key={facet}
-                    className="rounded-full border border-border/80 bg-background/70 px-4 py-2 text-sm text-foreground shadow-[var(--shadow-panel)]"
-                  >
-                    {facet}
-                  </span>
-                ))}
-              </div>
+              <HqSearchForm />
             </div>
           </div>
         </div>

@@ -45,23 +45,7 @@ export async function getBrainSummary(): Promise<BrainSummary> {
       db.execute("SELECT COUNT(*) AS value FROM assets WHERE kind IN ('pdf', 'doc');"),
     ])
 
-    const recentResult = await db.execute(`
-      SELECT
-        COALESCE(title, 'Untitled asset') AS title,
-        COALESCE(kind, 'unknown') AS kind,
-        COALESCE(project_id, 'Bez projektu') AS project,
-        substr(COALESCE(created_at, '1970-01-01'), 1, 10) AS date
-      FROM assets
-      ORDER BY created_at DESC, id DESC
-      LIMIT 6;
-    `)
-
-    const recentAssets: BrainAssetRow[] = recentResult.rows.map((row) => ({
-      title: String(row.title ?? 'Untitled asset'),
-      kind: String(row.kind ?? 'unknown'),
-      project: String(row.project ?? 'Bez projektu'),
-      date: String(row.date ?? '1970-01-01'),
-    }))
+    const recentAssets = await getBrainSearchRows(6)
 
     return {
       stats: [
@@ -74,6 +58,34 @@ export async function getBrainSummary(): Promise<BrainSummary> {
     }
   } catch {
     return fallbackSummary
+  }
+}
+
+export async function getBrainSearchRows(limit = 20): Promise<BrainAssetRow[]> {
+  try {
+    const db = getDb()
+    const recentResult = await db.execute({
+      sql: `
+        SELECT
+          COALESCE(title, 'Untitled asset') AS title,
+          COALESCE(kind, 'unknown') AS kind,
+          COALESCE(project_id, 'Bez projektu') AS project,
+          substr(COALESCE(created_at, '1970-01-01'), 1, 10) AS date
+        FROM assets
+        ORDER BY created_at DESC, id DESC
+        LIMIT ?;
+      `,
+      args: [limit],
+    })
+
+    return recentResult.rows.map((row) => ({
+      title: String(row.title ?? 'Untitled asset'),
+      kind: String(row.kind ?? 'unknown'),
+      project: String(row.project ?? 'Bez projektu'),
+      date: String(row.date ?? '1970-01-01'),
+    }))
+  } catch {
+    return fallbackSummary.recentAssets.slice(0, limit)
   }
 }
 
