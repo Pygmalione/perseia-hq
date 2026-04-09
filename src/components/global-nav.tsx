@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 
+import { ThemeToggle } from './theme-toggle'
+
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Galeria', href: '/gallery' },
@@ -51,14 +53,18 @@ export function GlobalNav() {
           })}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          aria-label={mobileOpen ? 'Zamknij menu' : 'Otworz menu'}
-          className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted/50 hover:text-foreground md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+
+          {/* Mobile hamburger */}
+          <button
+            aria-label={mobileOpen ? 'Zamknij menu' : 'Otworz menu'}
+            className="rounded-lg p-2 text-muted-foreground transition hover:bg-muted/50 hover:text-foreground md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
