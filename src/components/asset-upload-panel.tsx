@@ -11,11 +11,15 @@ type PendingFile = {
   kind: UploadKind
 }
 
-type IntakeResponse = {
+type BlobResponse = {
   ok: boolean
   error?: string
-  message?: string
-  files?: Array<PendingFile & { uploadKey: string }>
+  blob?: {
+    url: string
+    pathname: string
+    contentType: string
+    kind: string
+  }
 }
 
 type CommitResponse = {
@@ -56,45 +60,42 @@ export function AssetUploadPanel() {
   )
 
   async function submitIntake(nextFiles: File[]) {
-    const payloadFiles = nextFiles.map((file) => ({
-      name: file.name,
-      size: file.size,
-      mimeType: file.type || 'application/octet-stream',
-      kind: detectUploadKind(file),
-    }))
-
     setStatus('sending')
-    setMessage('Wysyłam intake do upload pipeline...')
+    setMessage('Wysyłam plik do blob storage i zapisuję do HQ...')
 
     try {
-      const response = await fetch('/api/uploads/intake', {
+      const file = nextFiles[0]
+      const arrayBuffer = await file.arrayBuffer()
+      const dataBase64 = Buffer.from(arrayBuffer).toString('base64')
+
+      const blobResponse = await fetch('/api/uploads/blob', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ files: payloadFiles }),
+        body: JSON.stringify({
+          name: file.name,
+          contentType: file.type || 'application/octet-stream',
+          dataBase64,
+          kind: detectUploadKind(file),
+        }),
       })
 
-      const data = (await response.json()) as IntakeResponse
+      const blobData = (await blobResponse.json()) as BlobResponse
 
-      if (!response.ok || !data.ok || !data.files?.length) {
+      if (!blobResponse.ok || !blobData.ok || !blobData.blob) {
         setStatus('error')
-        setMessage(
-          data.error === 'file_too_large'
-            ? 'Jeden z plików przekracza limit 10 MB.'
-            : 'Intake uploadu nie przeszedł walidacji.'
-        )
+        setMessage('Zapis do blob storage nie udał się.')
         return
       }
 
-      const firstFile = data.files[0]
       const commitResponse = await fetch('/api/uploads/commit', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          uploadKey: firstFile.uploadKey,
-          title: firstFile.name,
-          kind: firstFile.kind,
-          mimeType: firstFile.mimeType,
-          size: firstFile.size,
+          uploadKey: blobData.blob.url,
+          title: file.name,
+          kind: detectUploadKind(file),
+          mimeType: file.type || 'application/octet-stream',
+          size: file.size,
         }),
       })
 
@@ -102,15 +103,15 @@ export function AssetUploadPanel() {
 
       if (!commitResponse.ok || !commitData.ok) {
         setStatus('error')
-        setMessage('Intake przeszedł, ale zapis assetu do HQ nie udał się.')
+        setMessage('Blob zapisany, ale rejestracja assetu w HQ nie udała się.')
         return
       }
 
       setStatus('accepted')
-      setMessage(`Upload intake przyjęty i zapisany w HQ jako ${commitData.asset?.title}.`)
+      setMessage(`Zapisano w blob i HQ jako ${commitData.asset?.title}.`)
     } catch {
       setStatus('error')
-      setMessage('Nie udało się połączyć z upload intake API.')
+      setMessage('Nie udało się połączyć z upload pipeline.')
     }
   }
 
