@@ -11,6 +11,14 @@ import {
 } from '@/components/ui/card'
 import { hqConfig } from '@/config/hq'
 
+const featuredSearchSuggestions = [
+  'Neural Topology',
+  'Signal Aperture',
+  'Arch Monogram',
+  'Logotopia',
+  'Feedback',
+]
+
 export default function HqHome() {
   return (
     <main className="grain">
@@ -102,7 +110,7 @@ export default function HqHome() {
             </div>
 
             <div className="space-y-5">
-              <HqSearchForm />
+              <HqSearchForm suggestions={featuredSearchSuggestions} />
             </div>
           </div>
         </div>

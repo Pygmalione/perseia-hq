@@ -14,6 +14,11 @@ export default async function BrainPage({
   const query = params.q ?? ''
   const facet = params.facet ?? 'all'
   const filteredAssets = filterBrainAssets(summary.recentAssets, query, facet)
+  const suggestions = Array.from(
+    new Set(
+      summary.recentAssets.flatMap((asset) => [asset.title, asset.project, asset.kind]).filter(Boolean)
+    )
+  )
 
   return (
     <main className="grain">
@@ -33,7 +38,7 @@ export default async function BrainPage({
 
       <section id="brain-search" className="px-5 pb-10 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <BrainSearchForm initialQuery={query} initialFacet={facet} />
+          <BrainSearchForm initialQuery={query} initialFacet={facet} suggestions={suggestions} />
         </div>
       </section>
 

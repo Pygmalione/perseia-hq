@@ -4,7 +4,9 @@ import HqHome from './page'
 import { hqConfig } from '@/config/hq'
 
 vi.mock('@/components/hq-search-form', () => ({
-  HqSearchForm: () => <div data-testid="hq-search-form">HQ search form</div>,
+  HqSearchForm: ({ suggestions }: { suggestions?: string[] }) => (
+    <div data-testid="hq-search-form">{suggestions?.join(', ')}</div>
+  ),
 }))
 
 describe('Perseia HQ homepage', () => {
@@ -79,6 +81,11 @@ describe('Perseia HQ homepage', () => {
     it('renders the HQ search form', () => {
       render(<HqHome />)
       expect(screen.getByTestId('hq-search-form')).toBeInTheDocument()
+    })
+
+    it('passes featured suggestions into the HQ search form', () => {
+      render(<HqHome />)
+      expect(screen.getByText(/Neural Topology, Signal Aperture, Arch Monogram/i)).toBeInTheDocument()
     })
   })
 

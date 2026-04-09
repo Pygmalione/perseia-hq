@@ -21,9 +21,15 @@ vi.mock('@/lib/brain-data', () => ({
 }))
 
 vi.mock('@/components/brain-search-form', () => ({
-  BrainSearchForm: ({ initialQuery, initialFacet }: { initialQuery: string; initialFacet: string }) => (
-    <div data-testid="brain-search-form">{initialQuery}:{initialFacet}</div>
-  ),
+  BrainSearchForm: ({
+    initialQuery,
+    initialFacet,
+    suggestions,
+  }: {
+    initialQuery: string
+    initialFacet: string
+    suggestions?: string[]
+  }) => <div data-testid="brain-search-form">{initialQuery}:{initialFacet}:{suggestions?.join('|')}</div>,
 }))
 
 import BrainPage from './page'
@@ -41,7 +47,12 @@ describe('Asset Brain page', () => {
 
   it('passes query params into search form', async () => {
     render(await BrainPage({ searchParams: Promise.resolve({ q: 'signal', facet: 'image' }) }))
-    expect(screen.getByText('signal:image')).toBeInTheDocument()
+    expect(screen.getByText(/signal:image:/)).toBeInTheDocument()
+  })
+
+  it('passes suggestions into search form', async () => {
+    render(await BrainPage({ searchParams: Promise.resolve({}) }))
+    expect(screen.getByText(/Arch Monogram\|Logotopia\|image/i)).toBeInTheDocument()
   })
 
   describe('stats', () => {
