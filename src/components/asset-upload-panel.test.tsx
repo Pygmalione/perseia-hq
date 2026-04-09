@@ -9,10 +9,38 @@ describe('AssetUploadPanel', () => {
   })
 
   it('submits selected files to upload intake API', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ ok: true, message: 'Upload intake przyjęty.' }),
-    })
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          ok: true,
+          files: [
+            {
+              name: 'signal-aperture-01.jpg',
+              size: 5,
+              mimeType: 'image/jpeg',
+              kind: 'image',
+              uploadKey: 'pending/abc-signal-aperture-01.jpg',
+            },
+          ],
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          ok: true,
+          asset: {
+            id: 'asset-1',
+            title: 'signal-aperture-01.jpg',
+            kind: 'image',
+            path: 'pending/abc-signal-aperture-01.jpg',
+            format: 'image/jpeg',
+            size: 5,
+            status: 'pending-ingest',
+          },
+        }),
+      })
     vi.stubGlobal('fetch', fetchMock)
 
     render(<AssetUploadPanel />)
@@ -23,14 +51,20 @@ describe('AssetUploadPanel', () => {
     fireEvent.change(input, { target: { files: [file] } })
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
+      expect(fetchMock).toHaveBeenNthCalledWith(
+        1,
         '/api/uploads/intake',
+        expect.objectContaining({ method: 'POST' })
+      )
+      expect(fetchMock).toHaveBeenNthCalledWith(
+        2,
+        '/api/uploads/commit',
         expect.objectContaining({ method: 'POST' })
       )
     })
 
-    expect(await screen.findByText(/upload intake przyjęty/i)).toBeInTheDocument()
-    expect(screen.getByText(/signal-aperture-01.jpg/i)).toBeInTheDocument()
+    expect(await screen.findByText(/zapisany w hq jako signal-aperture-01.jpg/i)).toBeInTheDocument()
+    expect(screen.getByText(/image - 0 kb/i)).toBeInTheDocument()
   })
 
   it('shows validation message for oversized files', async () => {

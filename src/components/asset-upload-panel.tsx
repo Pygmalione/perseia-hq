@@ -16,6 +16,20 @@ type IntakeResponse = {
   files?: Array<PendingFile & { uploadKey: string }>
 }
 
+type CommitResponse = {
+  ok: boolean
+  error?: string
+  asset?: {
+    id: string
+    title: string
+    kind: PendingFile['kind']
+    path: string
+    format: string
+    size: number
+    status: string
+  }
+}
+
 function detectKind(file: File): PendingFile['kind'] {
   if (file.type.startsWith('image/')) return 'image'
   if (file.type.startsWith('video/')) return 'video'
@@ -65,7 +79,7 @@ export function AssetUploadPanel() {
 
       const data = (await response.json()) as IntakeResponse
 
-      if (!response.ok || !data.ok) {
+      if (!response.ok || !data.ok || !data.files?.length) {
         setStatus('error')
         setMessage(
           data.error === 'file_too_large'
@@ -75,8 +89,29 @@ export function AssetUploadPanel() {
         return
       }
 
+      const firstFile = data.files[0]
+      const commitResponse = await fetch('/api/uploads/commit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          uploadKey: firstFile.uploadKey,
+          title: firstFile.name,
+          kind: firstFile.kind,
+          mimeType: firstFile.mimeType,
+          size: firstFile.size,
+        }),
+      })
+
+      const commitData = (await commitResponse.json()) as CommitResponse
+
+      if (!commitResponse.ok || !commitData.ok) {
+        setStatus('error')
+        setMessage('Intake przeszedł, ale zapis assetu do HQ nie udał się.')
+        return
+      }
+
       setStatus('accepted')
-      setMessage(data.message ?? 'Upload intake przyjęty.')
+      setMessage(`Upload intake przyjęty i zapisany w HQ jako ${commitData.asset?.title}.`)
     } catch {
       setStatus('error')
       setMessage('Nie udało się połączyć z upload intake API.')
