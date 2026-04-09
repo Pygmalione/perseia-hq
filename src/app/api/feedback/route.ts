@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 
 import { getDb } from '@/lib/db'
 
+export const runtime = 'nodejs'
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
@@ -27,7 +29,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, feedbackId, rating })
   } catch (error) {
-    console.error('Feedback write failed:', error)
+    console.error('Feedback write failed:', {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      vercel: Boolean(process.env.VERCEL),
+      hasUrl: Boolean(process.env.TURSO_DATABASE_URL),
+      hasToken: Boolean(process.env.TURSO_AUTH_TOKEN),
+    })
     return NextResponse.json({ ok: false, error: 'feedback_write_failed' }, { status: 500 })
   }
 }

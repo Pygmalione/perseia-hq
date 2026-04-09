@@ -56,7 +56,8 @@ export async function getBrainSummary(): Promise<BrainSummary> {
       ],
       recentAssets,
     }
-  } catch {
+  } catch (error) {
+    console.error('getBrainSummary failed:', error)
     return fallbackSummary
   }
 }
@@ -84,7 +85,8 @@ export async function getBrainSearchRows(limit = 20): Promise<BrainAssetRow[]> {
       project: String(row.project ?? 'Bez projektu'),
       date: String(row.date ?? '1970-01-01'),
     }))
-  } catch {
+  } catch (error) {
+    console.error('getBrainSearchRows failed:', error)
     return fallbackSummary.recentAssets.slice(0, limit)
   }
 }
