@@ -1,3 +1,4 @@
+import { AssetUploadPanel } from '@/components/asset-upload-panel'
 import { BrainSearchForm } from '@/components/brain-search-form'
 import { hqConfig } from '@/config/hq'
 import { getBrainSummary } from '@/lib/brain-data'
@@ -57,6 +58,12 @@ export default async function BrainPage({
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section id="brain-upload" className="px-5 pb-10 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <AssetUploadPanel />
         </div>
       </section>
 

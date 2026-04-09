@@ -32,6 +32,10 @@ vi.mock('@/components/brain-search-form', () => ({
   }) => <div data-testid="brain-search-form">{initialQuery}:{initialFacet}:{suggestions?.join('|')}</div>,
 }))
 
+vi.mock('@/components/asset-upload-panel', () => ({
+  AssetUploadPanel: () => <div data-testid="asset-upload-panel">upload panel</div>,
+}))
+
 import BrainPage from './page'
 
 describe('Asset Brain page', () => {
@@ -53,6 +57,11 @@ describe('Asset Brain page', () => {
   it('passes suggestions into search form', async () => {
     render(await BrainPage({ searchParams: Promise.resolve({}) }))
     expect(screen.getByText(/Arch Monogram\|Logotopia\|image/i)).toBeInTheDocument()
+  })
+
+  it('renders the asset upload panel', async () => {
+    render(await BrainPage({ searchParams: Promise.resolve({}) }))
+    expect(screen.getByTestId('asset-upload-panel')).toBeInTheDocument()
   })
 
   describe('stats', () => {
