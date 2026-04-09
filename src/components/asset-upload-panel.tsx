@@ -1,6 +1,95 @@
 'use client'
 
+import { useMemo, useState } from 'react'
+
+type PendingFile = {
+  name: string
+  size: number
+  mimeType: string
+  kind: 'image' | 'video' | 'pdf'
+}
+
+type IntakeResponse = {
+  ok: boolean
+  error?: string
+  message?: string
+  files?: Array<PendingFile & { uploadKey: string }>
+}
+
+function detectKind(file: File): PendingFile['kind'] {
+  if (file.type.startsWith('image/')) return 'image'
+  if (file.type.startsWith('video/')) return 'video'
+  return 'pdf'
+}
+
+function formatSize(bytes: number) {
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 export function AssetUploadPanel() {
+  const [files, setFiles] = useState<File[]>([])
+  const [status, setStatus] = useState<'idle' | 'sending' | 'accepted' | 'error'>('idle')
+  const [message, setMessage] = useState(
+    'Wybierz pliki, a HQ wyśle intake do upload pipeline.'
+  )
+
+  const pendingFiles = useMemo<PendingFile[]>(
+    () =>
+      files.map((file) => ({
+        name: file.name,
+        size: file.size,
+        mimeType: file.type || 'application/octet-stream',
+        kind: detectKind(file),
+      })),
+    [files]
+  )
+
+  async function submitIntake(nextFiles: File[]) {
+    const payloadFiles = nextFiles.map((file) => ({
+      name: file.name,
+      size: file.size,
+      mimeType: file.type || 'application/octet-stream',
+      kind: detectKind(file),
+    }))
+
+    setStatus('sending')
+    setMessage('Wysyłam intake do upload pipeline...')
+
+    try {
+      const response = await fetch('/api/uploads/intake', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ files: payloadFiles }),
+      })
+
+      const data = (await response.json()) as IntakeResponse
+
+      if (!response.ok || !data.ok) {
+        setStatus('error')
+        setMessage(
+          data.error === 'file_too_large'
+            ? 'Jeden z plików przekracza limit 10 MB.'
+            : 'Intake uploadu nie przeszedł walidacji.'
+        )
+        return
+      }
+
+      setStatus('accepted')
+      setMessage(data.message ?? 'Upload intake przyjęty.')
+    } catch {
+      setStatus('error')
+      setMessage('Nie udało się połączyć z upload intake API.')
+    }
+  }
+
+  function handleFiles(nextFiles: FileList | null) {
+    if (!nextFiles || nextFiles.length === 0) return
+    const fileArray = Array.from(nextFiles)
+    setFiles(fileArray)
+    void submitIntake(fileArray)
+  }
+
   return (
     <section
       aria-labelledby="asset-upload-heading"
@@ -16,7 +105,7 @@ export function AssetUploadPanel() {
             Wrzuć nowe pliki do HQ
           </h2>
           <p className="max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">
-            Pierwszy etap uploadu jest już gotowy w interfejsie. Dropzone przyjmuje obrazy, wideo i PDF-y, a kolejny krok dopnie zapis do storage i indeksacji.
+            Dropzone przyjmuje obrazy, wideo i PDF-y, a teraz wysyła też prawdziwy intake do pipeline uploadu.
           </p>
           <div className="flex flex-wrap gap-2">
             {['PNG / JPG / WEBP', 'MP4 / MOV', 'PDF do 10 MB'].map((item) => (
@@ -53,19 +142,51 @@ export function AssetUploadPanel() {
             multiple
             accept="image/*,video/*,.pdf"
             className="sr-only"
+            onChange={(event) => handleFiles(event.target.files)}
           />
+
+          <div
+            aria-live="polite"
+            className={`rounded-[1.25rem] border p-4 text-sm leading-7 shadow-[var(--shadow-panel)] ${
+              status === 'accepted'
+                ? 'border-emerald-300/70 bg-emerald-50/80 text-emerald-950'
+                : status === 'error'
+                  ? 'border-red-300/70 bg-red-50/80 text-red-950'
+                  : 'border-border/70 bg-background/70 text-foreground'
+            }`}
+          >
+            {message}
+          </div>
+
+          {pendingFiles.length > 0 ? (
+            <div className="rounded-[1.25rem] border border-border/70 bg-background/70 p-4">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Ostatni intake
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-foreground">
+                {pendingFiles.map((file) => (
+                  <li key={`${file.name}-${file.size}`} className="flex flex-wrap items-center justify-between gap-3">
+                    <span>{file.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {file.kind} - {formatSize(file.size)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-[1.25rem] border border-border/70 bg-background/70 p-4">
               <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Walidacja</p>
               <p className="mt-2 text-sm leading-7 text-foreground">
-                Typ pliku, rozmiar i podstawowe metadane będą sprawdzane przed ingestem.
+                Typ pliku, rozmiar i podstawowe metadane są już sprawdzane przez intake API.
               </p>
             </div>
             <div className="rounded-[1.25rem] border border-border/70 bg-background/70 p-4">
               <p className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Status</p>
               <p className="mt-2 text-sm leading-7 text-foreground">
-                Backend uploadu jeszcze nie jest dopięty. Ten panel przygotowuje realny punkt wejścia w UI.
+                Kolejny krok to blob storage i finalny ingest assetu do HQ.
               </p>
             </div>
           </div>
