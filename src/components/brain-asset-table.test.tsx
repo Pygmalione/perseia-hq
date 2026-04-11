@@ -43,4 +43,32 @@ describe('BrainAssetTable', () => {
 
     expect(await screen.findByText((content, element) => content === 'approved' && element?.tagName === 'SPAN')).toBeInTheDocument()
   })
+
+  it('saves edited title and project metadata', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, assetId: 'asset-1', title: 'Signal Aperture Prime', projectId: 'HQ' }),
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    render(<BrainAssetTable assets={assets} />)
+
+    fireEvent.change(screen.getByLabelText(/edytuj tytuł signal aperture/i), {
+      target: { value: 'Signal Aperture Prime' },
+    })
+    fireEvent.change(screen.getByLabelText(/edytuj projekt signal aperture/i), {
+      target: { value: 'HQ' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /zapisz metadata signal aperture/i }))
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/assets/asset-1',
+        expect.objectContaining({ method: 'PATCH' })
+      )
+    })
+
+    expect(screen.getByDisplayValue('Signal Aperture Prime')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('HQ')).toBeInTheDocument()
+  })
 })

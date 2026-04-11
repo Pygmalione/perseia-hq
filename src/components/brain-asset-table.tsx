@@ -16,24 +16,32 @@ export function BrainAssetTable({ assets }: Props) {
 
   const hasItems = useMemo(() => items.length > 0, [items])
 
-  async function updateStatus(id: string, status: (typeof quickStatuses)[number]) {
+  async function updateAsset(id: string, payload: Record<string, string>) {
     setBusyId(id)
 
     try {
       const response = await fetch(`/api/assets/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) throw new Error('asset_update_failed')
 
       setItems((current) =>
-        current.map((asset) => (asset.id === id ? { ...asset, status } : asset))
+        current.map((asset) => (asset.id === id ? { ...asset, ...payload } : asset))
       )
     } finally {
       setBusyId(null)
     }
+  }
+
+  async function updateStatus(id: string, status: (typeof quickStatuses)[number]) {
+    await updateAsset(id, { status })
+  }
+
+  async function saveMetadata(id: string, title: string, project: string) {
+    await updateAsset(id, { title, projectId: project, project: project })
   }
 
   if (!hasItems) return null
@@ -54,9 +62,35 @@ export function BrainAssetTable({ assets }: Props) {
         <tbody>
           {items.map((asset) => (
             <tr key={`${asset.id}-${asset.date}`} className="border-b border-border/30 align-top">
-              <td className="py-3 text-foreground">{asset.title}</td>
+              <td className="py-3 text-foreground">
+                <input
+                  aria-label={`Edytuj tytuł ${asset.title}`}
+                  value={asset.title}
+                  onChange={(event) =>
+                    setItems((current) =>
+                      current.map((item) =>
+                        item.id === asset.id ? { ...item, title: event.target.value } : item
+                      )
+                    )
+                  }
+                  className="min-h-10 w-full rounded-xl border border-border/70 bg-background px-3 py-2 text-sm text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-primary/35"
+                />
+              </td>
               <td className="py-3 text-muted-foreground">{asset.kind}</td>
-              <td className="py-3 text-muted-foreground">{asset.project}</td>
+              <td className="py-3 text-muted-foreground">
+                <input
+                  aria-label={`Edytuj projekt ${asset.title}`}
+                  value={asset.project}
+                  onChange={(event) =>
+                    setItems((current) =>
+                      current.map((item) =>
+                        item.id === asset.id ? { ...item, project: event.target.value } : item
+                      )
+                    )
+                  }
+                  className="min-h-10 w-full rounded-xl border border-border/70 bg-background px-3 py-2 text-sm text-foreground outline-none transition focus-visible:ring-2 focus-visible:ring-primary/35"
+                />
+              </td>
               <td className="py-3">
                 <span className="inline-flex rounded-full border border-border/80 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-foreground">
                   {asset.status}
@@ -65,6 +99,15 @@ export function BrainAssetTable({ assets }: Props) {
               <td className="py-3 text-muted-foreground">{asset.date}</td>
               <td className="py-3">
                 <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={busyId === asset.id}
+                    aria-label={`Zapisz metadata ${asset.title}`}
+                    onClick={() => saveMetadata(asset.id, asset.title, asset.project)}
+                    className="min-h-9 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs tracking-[0.01em] text-primary transition hover:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Zapisz metadata
+                  </button>
                   {quickStatuses.map((status) => (
                     <button
                       key={status}

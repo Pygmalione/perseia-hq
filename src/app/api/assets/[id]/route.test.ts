@@ -34,6 +34,29 @@ describe('PATCH /api/assets/[id]', () => {
     )
   })
 
+  it('updates asset metadata when title and project are provided', async () => {
+    executeMock.mockResolvedValueOnce({ rowsAffected: 1 })
+
+    const { PATCH } = await import('./route')
+
+    const request = new Request('http://localhost/api/assets/asset-1', {
+      method: 'PATCH',
+      body: JSON.stringify({ title: 'Signal Aperture Prime', projectId: 'HQ' }),
+    })
+
+    const response = await PATCH(request, { params: Promise.resolve({ id: 'asset-1' }) })
+    const body = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(body).toEqual({ ok: true, assetId: 'asset-1', title: 'Signal Aperture Prime', projectId: 'HQ' })
+    expect(executeMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sql: expect.stringContaining('UPDATE assets SET title = ?, project_id = ?'),
+        args: ['Signal Aperture Prime', 'HQ', 'asset-1'],
+      })
+    )
+  })
+
   it('rejects invalid status payload', async () => {
     const { PATCH } = await import('./route')
 
