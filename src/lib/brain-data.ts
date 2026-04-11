@@ -1,10 +1,12 @@
 import { getDb } from './db'
 
 export type BrainAssetRow = {
+  id: string
   title: string
   kind: string
   project: string
   date: string
+  status: string
 }
 
 export type BrainStat = {
@@ -25,12 +27,12 @@ const fallbackSummary: BrainSummary = {
     { label: 'PDF / doc', value: '5' },
   ],
   recentAssets: [
-    { title: 'Arch Monogram', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-    { title: 'Constellation Weave', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-    { title: 'Orbital Ring', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-    { title: 'Folded Plane', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-    { title: 'Signal Aperture', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-    { title: 'Neural Topology', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
+    { id: 'fallback-1', title: 'Arch Monogram', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'approved' },
+    { id: 'fallback-2', title: 'Constellation Weave', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'reviewed' },
+    { id: 'fallback-3', title: 'Orbital Ring', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'pending-ingest' },
+    { id: 'fallback-4', title: 'Folded Plane', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'approved' },
+    { id: 'fallback-5', title: 'Signal Aperture', kind: 'image', project: 'Logotopia', date: '2026-04-08', status: 'pending-ingest' },
+    { id: 'fallback-6', title: 'Neural Topology', kind: 'image', project: 'Logotopia', date: '2026-04-08', status: 'approved' },
   ],
 }
 
@@ -68,10 +70,12 @@ export async function getBrainSearchRows(limit = 20): Promise<BrainAssetRow[]> {
     const recentResult = await db.execute({
       sql: `
         SELECT
+          COALESCE(id, 'unknown-id') AS id,
           COALESCE(title, 'Untitled asset') AS title,
           COALESCE(kind, 'unknown') AS kind,
           COALESCE(project_id, 'Bez projektu') AS project,
-          substr(COALESCE(created_at, '1970-01-01'), 1, 10) AS date
+          substr(COALESCE(created_at, '1970-01-01'), 1, 10) AS date,
+          COALESCE(status, 'pending-ingest') AS status
         FROM assets
         ORDER BY created_at DESC, id DESC
         LIMIT ?;
@@ -80,10 +84,12 @@ export async function getBrainSearchRows(limit = 20): Promise<BrainAssetRow[]> {
     })
 
     return recentResult.rows.map((row) => ({
+      id: String(row.id ?? 'unknown-id'),
       title: String(row.title ?? 'Untitled asset'),
       kind: String(row.kind ?? 'unknown'),
       project: String(row.project ?? 'Bez projektu'),
       date: String(row.date ?? '1970-01-01'),
+      status: String(row.status ?? 'pending-ingest'),
     }))
   } catch (error) {
     console.error('getBrainSearchRows failed:', error)

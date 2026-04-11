@@ -1,4 +1,5 @@
 import { AssetUploadPanel } from '@/components/asset-upload-panel'
+import { BrainAssetTable } from '@/components/brain-asset-table'
 import { BrainSearchForm } from '@/components/brain-search-form'
 import { hqConfig } from '@/config/hq'
 import { getBrainSummary } from '@/lib/brain-data'
@@ -74,28 +75,7 @@ export default async function BrainPage({
             <span>{filteredAssets.length} assetów</span>
           </div>
 
-          <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[38rem] text-sm">
-              <thead>
-                <tr className="border-b border-border/50 text-left text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  <th className="pb-3 font-normal">Nazwa</th>
-                  <th className="pb-3 font-normal">Typ</th>
-                  <th className="pb-3 font-normal">Projekt</th>
-                  <th className="pb-3 font-normal">Data</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAssets.map((asset) => (
-                  <tr key={`${asset.title}-${asset.date}`} className="border-b border-border/30">
-                    <td className="py-3 text-foreground">{asset.title}</td>
-                    <td className="py-3 text-muted-foreground">{asset.kind}</td>
-                    <td className="py-3 text-muted-foreground">{asset.project}</td>
-                    <td className="py-3 text-muted-foreground">{asset.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <BrainAssetTable assets={filteredAssets} />
 
           {filteredAssets.length === 0 ? (
             <div className="mt-6 rounded-[1.5rem] border border-border/70 bg-card/60 p-6 text-sm text-muted-foreground shadow-[var(--shadow-panel)]">

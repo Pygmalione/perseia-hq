@@ -10,12 +10,12 @@ vi.mock('@/lib/brain-data', () => ({
       { label: 'PDF / doc', value: '5' },
     ],
     recentAssets: [
-      { title: 'Arch Monogram', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-      { title: 'Constellation Weave', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-      { title: 'Orbital Ring', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-      { title: 'Folded Plane', kind: 'image', project: 'Logotopia', date: '2026-04-09' },
-      { title: 'Signal Aperture', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
-      { title: 'Neural Topology', kind: 'image', project: 'Logotopia', date: '2026-04-08' },
+      { id: 'asset-1', title: 'Arch Monogram', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'approved' },
+      { id: 'asset-2', title: 'Constellation Weave', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'reviewed' },
+      { id: 'asset-3', title: 'Orbital Ring', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'pending-ingest' },
+      { id: 'asset-4', title: 'Folded Plane', kind: 'image', project: 'Logotopia', date: '2026-04-09', status: 'approved' },
+      { id: 'asset-5', title: 'Signal Aperture', kind: 'image', project: 'Logotopia', date: '2026-04-08', status: 'pending-ingest' },
+      { id: 'asset-6', title: 'Neural Topology', kind: 'image', project: 'Logotopia', date: '2026-04-08', status: 'approved' },
     ],
   })),
 }))
@@ -34,6 +34,12 @@ vi.mock('@/components/brain-search-form', () => ({
 
 vi.mock('@/components/asset-upload-panel', () => ({
   AssetUploadPanel: () => <div data-testid="asset-upload-panel">upload panel</div>,
+}))
+
+vi.mock('@/components/brain-asset-table', () => ({
+  BrainAssetTable: ({ assets }: { assets: Array<{ title: string; status: string }> }) => (
+    <div data-testid="brain-asset-table">{assets.map((asset) => `${asset.title}:${asset.status}`).join('|')}</div>
+  ),
 }))
 
 import BrainPage from './page'
@@ -80,18 +86,15 @@ describe('Asset Brain page', () => {
   })
 
   describe('recent assets table', () => {
-    it('renders table headers', async () => {
+    it('renders the asset table component', async () => {
       render(await BrainPage({ searchParams: Promise.resolve({}) }))
-      expect(screen.getByText('Nazwa')).toBeInTheDocument()
-      expect(screen.getByText('Typ')).toBeInTheDocument()
-      expect(screen.getByText('Projekt')).toBeInTheDocument()
-      expect(screen.getByText('Data')).toBeInTheDocument()
+      expect(screen.getByTestId('brain-asset-table')).toBeInTheDocument()
     })
 
     it('renders filtered asset rows for query', async () => {
       render(await BrainPage({ searchParams: Promise.resolve({ q: 'signal' }) }))
-      expect(screen.getByText('Signal Aperture')).toBeInTheDocument()
-      expect(screen.queryByText('Arch Monogram')).not.toBeInTheDocument()
+      expect(screen.getByText(/Signal Aperture:pending-ingest/)).toBeInTheDocument()
+      expect(screen.queryByText(/Arch Monogram:approved/)).not.toBeInTheDocument()
     })
 
     it('renders recently added count after filtering', async () => {
