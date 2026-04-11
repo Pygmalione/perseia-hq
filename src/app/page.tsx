@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 
+import { AssetUploadPanel } from '@/components/asset-upload-panel'
 import { HqSearchForm } from '@/components/hq-search-form'
 import {
   Card,
@@ -113,6 +114,12 @@ export default function HqHome() {
               <HqSearchForm suggestions={featuredSearchSuggestions} />
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="upload" className="px-4 py-12 sm:px-8 sm:py-14 lg:px-12 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <AssetUploadPanel />
         </div>
       </section>
 

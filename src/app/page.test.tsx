@@ -9,6 +9,10 @@ vi.mock('@/components/hq-search-form', () => ({
   ),
 }))
 
+vi.mock('@/components/asset-upload-panel', () => ({
+  AssetUploadPanel: () => <div data-testid="asset-upload-panel">upload-panel</div>,
+}))
+
 describe('Perseia HQ homepage', () => {
   it('renders the headquarters headline', () => {
     render(<HqHome />)
@@ -86,6 +90,18 @@ describe('Perseia HQ homepage', () => {
     it('passes featured suggestions into the HQ search form', () => {
       render(<HqHome />)
       expect(screen.getByText(/Neural Topology, Signal Aperture, Arch Monogram/i)).toBeInTheDocument()
+    })
+  })
+
+  describe('upload section', () => {
+    it('renders the upload section wrapper', () => {
+      const { container } = render(<HqHome />)
+      expect(container.querySelector('#upload')).toBeInTheDocument()
+    })
+
+    it('renders the asset upload panel component', () => {
+      render(<HqHome />)
+      expect(screen.getByTestId('asset-upload-panel')).toBeInTheDocument()
     })
   })
 
